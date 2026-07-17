@@ -5,7 +5,6 @@ use App\Http\Controllers\Client\ClientDashboardController;
 use App\Http\Controllers\Client\ProjectRequestController as ClientProjectRequestController;
 use App\Http\Controllers\Client\ProposalResponseController;
 use App\Http\Controllers\Engineer\EngineerDashboardController;
-use App\Http\Controllers\Engineer\EstimateController;
 use App\Http\Controllers\Engineer\TechnicalReportController;
 use App\Http\Controllers\Manager\ManagerDashboardController;
 use App\Http\Controllers\Manager\ProjectRequestController as ManagerProjectRequestController;
@@ -53,10 +52,6 @@ Route::middleware(['auth', 'role:engineer'])->prefix('engineer')->name('engineer
 
     Route::get('/dashboard', [EngineerDashboardController::class, 'index'])->name('dashboard');
     Route::post('/status-update', [EngineerDashboardController::class, 'updateStatus'])->name('status.update');
-    Route::get('/estimates', [EstimateController::class, 'create'])->name('estimates');
-    Route::get('/estimates/create/{project_request_id}', [EstimateController::class, 'create'])->name('estimates.create');
-    Route::post('/estimates/store', [EstimateController::class, 'store'])->name('estimates.store');
-    Route::get('/estimates/{id}/report', [EstimateController::class, 'generateReport'])->name('estimates.report');
     Route::get('/technical_report', [TechnicalReportController::class, 'create'])->name('technical_report');
     Route::get('/technical-report/{project_request_id}', [TechnicalReportController::class, 'create'])->name('technicalreport.create');
     Route::post('/technical-report/store', [TechnicalReportController::class, 'storeTechnicalReport'])->name('technical_report.store');

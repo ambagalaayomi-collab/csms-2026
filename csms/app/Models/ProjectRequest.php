@@ -27,7 +27,7 @@ class ProjectRequest extends Model
     public function client() { return $this->belongsTo(User::class, 'client_id'); }
     public function assignedEngineer() { return $this->belongsTo(User::class, 'assigned_engineer_id'); }
     public function technicalReport() { return $this->hasOne(TechnicalReport::class, 'req_id')->latestOfMany('report_id'); }
-    public function estimate() { return $this->hasOne(Estimate::class, 'project_request_id')->latestOfMany(); }
+   
     public function proposals() { return $this->hasMany(Proposal::class, 'project_request_id'); }
     public function latestProposal() { return $this->hasOne(Proposal::class, 'project_request_id')->latestOfMany(); }
 }

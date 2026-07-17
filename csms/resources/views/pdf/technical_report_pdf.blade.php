@@ -23,7 +23,7 @@
 
 <div class="info-section">
     <p><strong>Report Date:</strong> {{ $report->date }}</p>
-    <p><strong>Request ID:</strong> R-{{ $report->req_id }}</p>
+    <p><strong>Request ID:</strong> R-{{ str_pad($report->req_id, 4, '0', STR_PAD_LEFT) }}</p>
     <p><strong>Project Name:</strong> {{ $requestData->name ?? $report->projectRequest->name ?? 'N/A' }}</p>
     <p><strong>Project Type:</strong> {{ $requestData->project_type ?? $report->projectRequest->project_type ?? 'N/A' }}</p>
     <p><strong>Estimated Duration:</strong> {{ $report->estimated_duration ?? $report->duration }}</p>

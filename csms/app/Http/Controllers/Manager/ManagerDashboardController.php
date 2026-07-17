@@ -20,7 +20,7 @@ class ManagerDashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $clientRequests = ProjectRequest::with(['technicalReport', 'estimate', 'latestProposal'])
+        $clientRequests = ProjectRequest::with(['technicalReport',  'latestProposal'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($subQuery) use ($search) {
                     $subQuery

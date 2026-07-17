@@ -10,7 +10,7 @@ class EngineerDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ProjectRequest::with(['technicalReport', 'estimate'])
+        $query = ProjectRequest::with(['technicalReport'])
             ->where('assigned_engineer_id', $request->user()->id)
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $search = $request->string('search');

@@ -656,11 +656,7 @@
             <li><a href="#"><span><i class="fa-solid fa-list-check"></i></span> <text>Assigned Requests</text></a></li>
             
     </a></li>
-            <li>
-                <a href="{{ route('engineer.estimates') }}">
-                    <span><i class="fa fa-calculator"></i></span> <text>Estimates</text>
-                </a>
-            </li>
+           
             <li>
                 <a href="{{ route('engineer.technical_report') }}#assigned-requests">
                     <span><i class="fas fa-file-alt"></i></span> <text>Technical Report</text>
@@ -783,7 +779,7 @@
 
                     @foreach($assignedRequests as $request)
                         <option value="{{ $request->id }}">
-                            R-{{ $request->id }} -
+                           R-{{ str_pad($request->id, 4, '0', STR_PAD_LEFT) }} -
                             {{ $request->project_type ?? $request->title }}
                         </option>
                     @endforeach
@@ -884,7 +880,7 @@
                             @if(isset($assignedRequests))
                                 @forelse($assignedRequests as $request)
                                     <tr>
-                                        <td>R-{{ $request->id }}</td>
+                                        <td>R-{{ str_pad($request->id, 4, '0', STR_PAD_LEFT) }}</td>
                                         <td>{{ $request->project_type ?? $request->title }}</td>
                                         <td>{{ $request->name ?? $request->client_name }}</td>
                                         <td>{{ $request->due_date ?? 'Not set' }}</td>
@@ -951,7 +947,7 @@
                     <tr style="border-bottom: 1px solid #f0f0f0; transition: background 0.2s;">
                         
                         <td style="padding: 12px; font-weight: 700; color: #111;">
-                            R-{{ $item->id }}
+                            R-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}
                         </td>
 
                         <td style="padding: 12px;">
@@ -966,11 +962,7 @@
                         <td style="padding: 12px; text-align: right;">
     <div style="display: inline-flex; gap: 8px; align-items: center;">
         
-        @if($item->estimate)
-            <a href="{{ route('engineer.estimates.report', $item->id) }}" target="_blank" title="View Estimate PDF" style="background-color: #00695c; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block;">
-                📄 Estimate PDF
-            </a>
-        @endif
+       
 
    @if($item->technicalReport)
     <a href="{{ route('view.technical_report.pdf', $item->id) }}"

@@ -234,7 +234,7 @@
                                 data-labor="{{ ($req->estimate->mason_cost ?? 0) + ($req->estimate->carpenter_cost ?? 0) + ($req->estimate->helper_cost ?? 0) }}"
                                 data-equipment="{{ ($req->estimate->mixer_cost ?? 0) + ($req->estimate->excavator_cost ?? 0) + ($req->estimate->truck_cost ?? 0) }}"
                                 data-total="{{ ($req->estimate->cement_cost ?? 0) + ($req->estimate->sand_cost ?? 0) + ($req->estimate->steel_cost ?? 0) + ($req->estimate->brick_cost ?? 0) + ($req->estimate->mason_cost ?? 0) + ($req->estimate->carpenter_cost ?? 0) + ($req->estimate->helper_cost ?? 0) + ($req->estimate->mixer_cost ?? 0) + ($req->estimate->excavator_cost ?? 0) + ($req->estimate->truck_cost ?? 0) }}">
-                            R-{{ $req->id }} - {{ $req->name }} ({{ $req->project_type }})
+                            R-{{ str_pad($req->id, 4, '0', STR_PAD_LEFT) }}- {{ $req->name }} ({{ $req->project_type }})
                         </option>
                     @endforeach
                 </select>
