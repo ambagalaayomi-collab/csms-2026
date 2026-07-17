@@ -978,6 +978,16 @@
        style="background:#1976d2;color:white;padding:6px 12px;text-decoration:none;border-radius:4px;font-size:12px;font-weight:600;">
         📄 Technical PDF
     </a>
+     @if($item->technicalReport->cost_estimate_file)
+        <a href="{{ route(
+                'engineer.technical_report.excel',
+                $item->technicalReport->report_id
+            ) }}"
+           title="Download uploaded Excel file"
+           style="background:#217346;color:white;padding:6px 12px;text-decoration:none;border-radius:4px;font-size:12px;font-weight:600;">
+            📊 Excel File
+        </a>
+    @endif
 @endif
         @if(!$item->estimate && !$item->technicalReport)
             <span style="color: #c62828; font-size: 12px; font-weight: 700; background: #ffebee; padding: 4px 10px; border-radius: 4px; border: 1px solid #ffcdd2; display: inline-block;">
