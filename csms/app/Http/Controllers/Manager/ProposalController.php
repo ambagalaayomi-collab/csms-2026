@@ -37,9 +37,48 @@ class ProposalController extends Controller
 
     public function showPdf(Request $request, Proposal $proposal)
     {
-        abort_if($request->user()->role === 'client' && $proposal->client_id !== $request->user()->id, 403);
-        return $this->pdf($proposal)->stream('proposal_'.$proposal->id.'.pdf');
+         abort_if(
+        $request->user()->role === 'client' &&
+        (int) $proposal->client_id !== (int) $request->user()->id,
+        403,
+        'You are not authorized to view this proposal.'
+    );
+
+    return $this->pdf($proposal)
+        ->stream('proposal_'.$proposal->id.'.pdf');
     }
+    public function downloadExcel(Request $request, Proposal $proposal)
+{
+    // Clientට තමන්ගේ proposal එකේ Excel file එක විතරක් ලබාදෙයි.
+    abort_if(
+        $request->user()->role === 'client' &&
+        (int) $proposal->client_id !== (int) $request->user()->id,
+        403,
+        'You are not authorized to download this Excel file.'
+    );
+
+    $proposal->loadMissing('technicalReport');
+
+    $report = $proposal->technicalReport;
+
+    abort_unless(
+        $report,
+        404,
+        'Technical report is not available.'
+    );
+
+    abort_unless(
+        $report->cost_estimate_file &&
+        Storage::disk('public')->exists($report->cost_estimate_file),
+        404,
+        'Cost estimate Excel file not found.'
+    );
+
+    return Storage::disk('public')->download(
+        $report->cost_estimate_file,
+        'cost_estimate_R-' . str_pad($report->req_id, 4, '0', STR_PAD_LEFT) . '.xlsx'
+    );
+}
 
     public function sendToClient(Proposal $proposal)
     {

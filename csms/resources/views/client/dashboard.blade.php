@@ -1186,9 +1186,12 @@
 
                                 <td>
                                     @if($proposal->pdf_path)
-                                        <a href="{{ asset('storage/' . $proposal->pdf_path) }}" target="_blank" class="view-link">
-                                            View PDF
-                                        </a>
+                                        <a href="{{ route('proposal.pdf', ['proposal' => $proposal->id]) }}"
+   target="_blank"
+   rel="noopener"
+   class="view-link">
+    View PDF
+</a>
                                     @else
                                         No PDF
                                     @endif

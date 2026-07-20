@@ -140,6 +140,25 @@
         .footer strong {
             color: #003f35;
         }
+        .excel-download-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background-color: #eefbf5;
+    border: 1px solid #0b8065;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.excel-download-box strong {
+    color: #003f35;
+    margin-right: 8px;
+}
+
+.excel-download-box a {
+    color: #0066cc;
+    font-weight: bold;
+    text-decoration: underline;
+}
     </style>
 </head>
 
@@ -338,6 +357,15 @@
                 </td>
             </tr>
         </table>
+ @if($technicalReport && $technicalReport->cost_estimate_file)
+    <div class="excel-download-box">
+        <strong>Detailed Cost Estimate:</strong>
+
+        <a href="{{ route('proposal.excel', ['proposal' => $proposal->id], true) }}">
+            Download Cost Breakdown Excel File
+        </a>
+    </div>
+@endif
     </div>
 
     <div class="section">
@@ -432,6 +460,7 @@
         </tr>
         @endif
     </table>
+   
 
 </div>
     <div class="footer">

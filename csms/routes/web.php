@@ -58,7 +58,12 @@ Route::middleware(['auth', 'role:engineer'])->prefix('engineer')->name('engineer
     Route::get('/technical-report/{id}/excel', [TechnicalReportController::class, 'downloadExcel'])->name('technical_report.excel');
 });
 
-Route::middleware(['auth', 'role:client,project_manager'])->get('/proposal/{proposal}/pdf',
-    [ProposalController::class, 'showPdf'])->name('proposal.pdf');
+Route::middleware(['auth', 'role:client,project_manager'])->group(function () {
+    Route::get('/proposal/{proposal}/pdf', [ProposalController::class, 'showPdf'])
+        ->name('proposal.pdf');
+
+    Route::get('/proposal/{proposal}/excel', [ProposalController::class, 'downloadExcel'])
+        ->name('proposal.excel');
+});
 Route::middleware(['auth', 'role:engineer,project_manager'])->get('/view-technical-report-pdf/{id}',
     [TechnicalReportController::class, 'generatePDF'])->name('view.technical_report.pdf');

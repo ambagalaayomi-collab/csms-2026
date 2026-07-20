@@ -918,8 +918,8 @@
         <div>
             <h3>Contact Us</h3>
             <p><i class="fa-solid fa-location-dot footer-icon"></i> Kurunegala, Sri Lanka</p>
-            <p><i class="fa-solid fa-phone footer-icon"></i> +94 77 123 4567</p>
-            <p><i class="fa-solid fa-envelope footer-icon"></i> info@csms.com</p>
+            <p><i class="fa-solid fa-phone footer-icon"></i> +94 762716101</p>
+            <p><i class="fa-solid fa-envelope footer-icon"></i> csms@gmail.com</p>
         </div>
 
         <div class="newsletter">
