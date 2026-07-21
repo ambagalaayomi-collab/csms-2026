@@ -13,26 +13,81 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (! Auth::check()) return view('welcome');
-    return redirect()->route(match (Auth::user()->role) {
-        'client' => 'client.dashboard', 'project_manager' => 'project.manager.dashboard',
-        'engineer' => 'engineer.dashboard', default => 'home',
-    });
+    if (! Auth::check()) {
+        return view('welcome', [
+            'showLogin' => false,
+        ]);
+    }
+
+    return redirect()->route(
+        match (Auth::user()->role) {
+            'client' => 'client.dashboard',
+            'project_manager' => 'project.manager.dashboard',
+            'engineer' => 'engineer.dashboard',
+            default => 'home',
+        }
+    );
 })->name('home');
 
-Route::post('/register', [AuthController::class, 'register'])->middleware('guest')->name('register');
-Route::post('/login', [AuthController::class, 'login'])->middleware('guest')->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
 
-//client
+Route::middleware('guest')->group(function () {
 
-Route::middleware(['auth', 'role:client'])->group(function () {
-    Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
-    Route::get('/client/request-project', [ClientProjectRequestController::class, 'create'])->name('client.request.project');
-    Route::post('/project-request/store', [ClientProjectRequestController::class, 'store'])->name('project.request.store');
-    Route::post('/proposal/{proposal}/respond', ProposalResponseController::class)->name('proposal.respond');
+    Route::post('/register', [
+        AuthController::class,
+        'register',
+    ])->name('register');
+
+    // Login page requested by auth middleware
+    Route::get('/login', function () {
+        return view('welcome', [
+            'showLogin' => true,
+        ]);
+    })->name('login');
+
+    // Login form submission
+    Route::post('/login', [
+        AuthController::class,
+        'login',
+    ])->name('login.submit');
 });
 
+Route::post('/logout', [
+    AuthController::class,
+    'logout',
+])->middleware('auth')->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Client Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:client'])->group(function () {
+
+    Route::get('/client/dashboard', [
+        ClientDashboardController::class,
+        'index',
+    ])->name('client.dashboard');
+
+    Route::get('/client/request-project', [
+        ClientProjectRequestController::class,
+        'create',
+    ])->name('client.request.project');
+
+    Route::post('/project-request/store', [
+        ClientProjectRequestController::class,
+        'store',
+    ])->name('project.request.store');
+
+    Route::post('/proposal/{proposal}/respond',
+        ProposalResponseController::class
+    )->name('proposal.respond');
+});
 //projectmanger
 
 Route::middleware(['auth', 'role:project_manager'])->group(function () {

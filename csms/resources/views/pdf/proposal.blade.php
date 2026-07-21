@@ -406,10 +406,10 @@
                 Construction Site Management System
             </p>
 
-            <p style="margin-top: 22px;">
+            <!-- <p style="margin-top: 22px;">
                 <strong>Signature:</strong>
                 <span class="signature-line"></span>
-            </p>
+            </p> -->
 
             <p style="margin-top: 12px;">
                 <strong>Date:</strong>

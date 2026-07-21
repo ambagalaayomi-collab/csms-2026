@@ -9,10 +9,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Services\TextLkSmsService;
+
 
 class ProposalController extends Controller
 {
-    public function store(Request $request, ProjectRequest $projectRequest)
+    public function store(
+    Request $request,
+    ProjectRequest $projectRequest,
+    TextLkSmsService $smsService
+)
     {
         $data = $request->validate(['proposal_details' => ['required', 'string', 'max:5000']]);
         abort_if($projectRequest->proposals()->exists(), 422, 'A proposal already exists for this request.');
@@ -32,6 +38,16 @@ class ProposalController extends Controller
             $projectRequest->update(['status' => 'Proposal Sent']);
             return $proposal;
         });
+        $phone = $projectRequest->phone;
+
+$message = 'CSMS: Your project proposal P-'
+    . str_pad($proposal->id, 4, '0', STR_PAD_LEFT)
+    . ' is ready. Please log in to CSMS to review it: '
+    . 'https://csms-2026-production.up.railway.app/';
+
+if ($phone) {
+    $smsService->send($phone, $message);
+}
         return redirect()->route('project.manager.dashboard')->with('proposal_success', 'Proposal created and sent successfully.');
     }
 
@@ -80,20 +96,83 @@ class ProposalController extends Controller
     );
 }
 
-    public function sendToClient(Proposal $proposal)
-    {
-        DB::transaction(function () use ($proposal) {
-            $proposal->update(['status' => 'Sent']);
-            $proposal->projectRequest()->update(['status' => 'Proposal Sent']);
-        });
-        return back()->with('success', 'Proposal sent to the client successfully.');
+    public function sendToClient(
+    Proposal $proposal,
+    TextLkSmsService $smsService
+) {
+    DB::transaction(function () use ($proposal) {
+        $proposal->update([
+            'status' => 'Sent',
+        ]);
+
+        $proposal->projectRequest()->update([
+            'status' => 'Proposal Sent',
+        ]);
+    });
+
+    $proposal->loadMissing('projectRequest');
+
+    $projectRequest = $proposal->projectRequest;
+
+    if (! $projectRequest) {
+        return back()->with(
+            'error',
+            'The related project request was not found.'
+        );
     }
 
-    private function pdf(Proposal $proposal)
-    {
-        $proposal->loadMissing(['projectRequest', 'technicalReport', 'manager']);
-        return Pdf::loadView('pdf.proposal', ['proposal' => $proposal,
-            'projectRequest' => $proposal->projectRequest, 'technicalReport' => $proposal->technicalReport,
-            'manager' => $proposal->manager]);
+    // project_requests table එකේ phone column එක
+    $phone = $projectRequest->phone;
+
+    if (! $phone) {
+        return back()->with(
+            'success',
+            'Proposal sent successfully, but the Client phone number is not available.'
+        );
     }
+
+    $proposalNumber = 'P-' . str_pad(
+        $proposal->id,
+        4,
+        '0',
+        STR_PAD_LEFT
+    );
+
+    $message =
+        'CSMS: Your project proposal ' .
+        $proposalNumber .
+        ' is ready. Please log in to CSMS to review it.';
+
+    $smsSent = $smsService->send(
+        $phone,
+        $message
+    );
+
+    if ($smsSent) {
+        return back()->with(
+            'success',
+            'Proposal sent successfully. SMS notification sent to the Client.'
+        );
+    }
+
+    return back()->with(
+        'success',
+        'Proposal sent successfully, but the SMS notification could not be sent.'
+    );
+}
+private function pdf(Proposal $proposal)
+{
+    $proposal->loadMissing([
+        'projectRequest',
+        'technicalReport',
+        'manager',
+    ]);
+
+    return Pdf::loadView('pdf.proposal', [
+        'proposal' => $proposal,
+        'projectRequest' => $proposal->projectRequest,
+        'technicalReport' => $proposal->technicalReport,
+        'manager' => $proposal->manager,
+    ]);
+}
 }

@@ -600,7 +600,7 @@
             <span class="close-login-modal" id="closeLoginModal">&times;</span>
         </div>
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login.submit') }}">
             @csrf
 
             @if(session('error_msg'))
@@ -765,12 +765,22 @@
         </p>
 
       <div class="hero-actions">
-        
-            <a href="{{ route('client.request.project') }}" class="dashboard-btn">
-                <i class="fa-solid fa-paper-plane"></i>
-               Submit Request
-               
-            </a>
+     @auth
+    @if(Auth::user()->role === 'client')
+        <a href="{{ route('client.request.project') }}"
+           class="dashboard-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+            Submit Request
+        </a>
+    @endif
+@else
+    <a href="#"
+       class="dashboard-btn"
+       onclick="event.preventDefault(); showLoginModal();">
+        <i class="fa-solid fa-paper-plane"></i>
+        Submit Project Request
+    </a>
+@endauth
         </div>
     </div>
 
@@ -936,6 +946,7 @@
 </footer>
 
 <script>
+    
     const loginModal = document.getElementById('loginModal');
     const registerModal = document.getElementById('registerModal');
 
